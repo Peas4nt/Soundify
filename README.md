@@ -1,0 +1,2 @@
+# MyMusicApp
+My school project
