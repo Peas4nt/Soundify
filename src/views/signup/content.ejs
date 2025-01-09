@@ -1,0 +1,101 @@
+<div class="row g-0">
+
+  <div class="col-12 col-xl-7 col-xxl-8 d-none d-xl-flex border-end bg-transparent">
+    <div class="card-body image-container">
+      <img src="/images/image1.png" class="full-image" alt="image">
+    </div>
+  </div>
+
+  <div class="col-12 col-xl-5 col-xxl-4">
+    <div class="card rounded-0 border-0 shadow-none m-0">
+      <div class="card-body p-sm-5 vh-100 m-0">
+        <div class="row">
+          <img class="ms-2 p-0" src="/images/logo.png" style="width: 50px;" alt="LOGO">
+          <h1 class="w-50 m-0 p-0">SOUNDIFY</h1>
+        </div>
+        <h4 class="fw-bold">Get Started Now</h4>
+        <p class="mb-0">Enter your credentials to create your account</p>
+
+
+        <div class="form-body mt-4">
+          <form id="registration" class="row g-3" action="/signup" method="post">
+            <!-- Username -->
+            <div class="col-12">
+              <label for="inputUsername" class="form-label">Username</label>
+              <input type="text" class="form-control" name="username" id="inputUsername" placeholder="Jhon" value="<%= values && values.username ? values.username : '' %>">
+              <% if (error && error.username) { %>
+              <div class="text-danger"><%= error.username %></div>
+              <% } %>
+            </div>
+
+            <!-- Email Address -->
+            <div class="col-12">
+              <label for="inputEmailAddress" class="form-label">Email Address</label>
+              <input type="email" class="form-control" name="email" id="inputEmailAddress" placeholder="example@user.com" value="<%= values && values.email ? values.email : '' %>">
+              <% if (error && error.email) { %>
+              <div class="text-danger"><%= error.email %></div>
+              <% } %>
+            </div>
+
+            <!-- Password -->
+            <div class="col-12">
+              <label for="inputChoosePassword" class="form-label">Password</label>
+              <div class="input-group">
+                <input type="password" class="form-control" name="password" id="inputChoosePassword" placeholder="Enter Password" value="<%= values && values.password ? values.password : '' %>">
+                <a class="input-group-text bg-transparent show-pass-btn">
+                  <i class="fa-solid fa-eye-slash" id="hide-pass"></i>
+                  <i class="fa-solid fa-eye" id="show-pass"></i>
+                </a>
+              </div>
+              <% if (error && error.password) { %>
+              <div class="text-danger"><%= error.password %></div>
+              <% } %>
+            </div>
+
+            <!-- Repeat Password -->
+            <div class="col-12">
+              <label for="inputChoosePassword2" class="form-label">Repeat password</label>
+              <div class="input-group">
+                <input type="password" class="form-control" name="password2" id="inputChoosePassword2" placeholder="Enter Password" value="<%= values && values.password2 ? values.password2 : '' %>">
+                <a class="input-group-text bg-transparent show-pass-btn">
+                  <i class="fa-solid fa-eye-slash" id="hide-pass"></i>
+                  <i class="fa-solid fa-eye" id="show-pass"></i>
+                </a>
+              </div>
+              <% if (error && error.password2) { %>
+              <div class="text-danger"><%= error.password2 %></div>
+              <% } %>
+            </div>
+            <!-- <div class="col-12">
+              <label for="inputSelectCountry" class="form-label">Country</label>
+              <select class="form-select" id="inputSelectCountry">
+                <option selected>India</option>
+                <option value="1">United Kingdom</option>
+                <option value="2">America</option>
+                <option value="3">Dubai</option>
+              </select>
+            </div> -->
+            <!-- <div class="col-12">
+              <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked">
+                <label class="form-check-label" for="flexSwitchCheckChecked">I read and agree to Terms & Conditions</label>
+              </div>
+            </div> -->
+            <div class="col-12">
+              <div class="d-grid">
+                <button type="submit" class="btn btn-primary">SignUp</button>
+              </div>
+            </div>
+            <div class="col-12">
+              <div class="text-start">
+                <p class="mb-0">Already have an account? <a href="/login">Sign in here</a></p>
+              </div>
+            </div>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div>

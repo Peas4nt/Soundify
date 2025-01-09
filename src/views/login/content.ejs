@@ -1,0 +1,61 @@
+<div class="row g-0">
+  
+  <div class="col-12 col-xl-7 col-xxl-8 d-none d-xl-flex border-end bg-transparent">
+    <div class="card-body image-container">
+      <img src="/images/image1.png" class="full-image" alt="image">
+    </div>
+  </div>
+
+  <div class="col-12 col-xl-5 col-xxl-4">
+    <div class="card rounded-0 mb-0 border-0 shadow-none m-0">
+      <div class="card-body p-sm-5 vh-100">
+        <div class="row">
+          <img class="ms-2 p-0" src="/images/logo.png" style="width: 50px;" alt="LOGO">
+          <h1 class="w-50 m-0 p-0">SOUNDIFY</h1>
+        </div>
+        <h4 class="fw-bold">Get Started Now</h4>
+        <p class="mb-0">Enter your credentials to login your account</p>
+
+
+        <% if (error && error.msg) { %>
+        <div class="alert alert-danger" role="alert">
+          <%= error.msg %>
+        </div>
+        <% } %>
+
+
+        <div class="form-body mt-4">
+          <form class="row g-3" id="login-form" action="/login" method="post">
+            <div class="col-12">
+              <label for="inputEmailAddress" class="form-label">Email</label>
+              <input type="email" class="form-control" id="inputEmailAddress" name="email" placeholder="jhon@example.com" value="<%= values && values.email ? values.email : '' %>">
+            </div>
+            <div class="col-12">
+              <label for="inputChoosePassword" class="form-label">Password</label>
+              <div class="input-group">
+                <input type="password" class="form-control" id="inputChoosePassword" name="password" placeholder="Enter Password" value="<%= values && values.password ? values.password : '' %>">
+                <a class="input-group-text bg-transparent show-pass-btn">
+                  <i class="fa-solid fa-eye-slash" id="hide-pass"></i>
+                  <i class="fa-solid fa-eye" id="show-pass"></i>
+                </a>
+              </div>
+            </div>
+
+            <div class="col-12">
+              <div class="d-grid">
+                <button type="submit" class="btn btn-primary">Login</button>
+              </div>
+            </div>
+            <div class="col-12">
+              <div class="text-start">
+                <p class="mb-0">Don't have an account yet? <a href="/signup">Sign up here</a></p>
+              </div>
+            </div>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div>

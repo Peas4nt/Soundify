@@ -1,0 +1,55 @@
+<div class="playlist-menu">
+  <div class="row-title">
+    <h3>New playlists:</h3>
+  </div>
+
+  <div id="playlistSlider" class="splide" style="width: 100%">
+    <div class="splide__track">
+      <ul class="splide__list">
+        <% recentAddedPlaylists.forEach(playlist => { %>
+        <li class="splide__slide">
+          <a href="/playlist/<%= playlist.slug %>" data-link>
+            <div class="card context-target" id="<%= playlist.playlist_key %>" el-type="playlist" owner="<%= playlist.is_your_playlist%>">
+              <div class="card-img-top">
+                <img src="<%= playlist.image_path != ''? process.env.IMAGE_PATH + playlist.image_path : process.env.DEFAULT_ALBUM_IMAGE_PATH %>" alt="playlist" class="card-img-top rounded" style="height: 18vh;"/>
+                <button class="play-playlist-button">
+                  <i class="fa-solid fa-play"></i>
+                </button>
+              </div>
+              <div class="card-body">
+                <h6 class="card-title"><%= playlist.name %></h6>
+              </div>
+            </div>
+          </a>
+        </li>
+        <% }) %>
+      </ul>
+    </div>
+  </div>
+
+  <div class="row-title">
+    <h3>Recently played:</h3>
+  </div>
+
+  <div id="playlistSlider" class="splide" style="width: 100%">
+    <div class="splide__track">
+      <ul class="splide__list">
+        <% for (let i = 1; i < 21; i++) { %>
+        <li class="splide__slide">
+          <div class="card">
+            <div class="card-img-top">
+              <img src="/images/album.jpg" alt="playlist" class="card-img-top" />
+              <button class="play-playlist-button">
+                <i class="fa-solid fa-play"></i>
+              </button>
+            </div>
+            <div class="card-body">
+              <h6 class="card-title">Playlist Title <%= i %></h6>
+            </div>
+          </div>
+        </li>
+        <% } %>
+      </ul>
+    </div>
+  </div>
+</div>

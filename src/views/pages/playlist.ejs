@@ -1,0 +1,56 @@
+<div class="playlist-container">
+  <div class="playlist-info d-flex m-2">
+    <img class="playlist-image me-3" style="width: 20vh; height: 20vh" src="<%= playlist.image_path %>" alt="image" />
+    <div>
+      <h2><%= playlist.name %></h2>
+      <h4><%= playlist.username %></h4>
+      <p><%= playlist.description %></p>
+    </div>
+  </div>
+  <div class="ms-2">
+    <!-- TODO playlists buttons -->
+    <button id="<%= playlist.slug %>" class="play-playlist btn btn-primary">
+      <span id="play"><i class="fa-solid fa-play"></i></span><span id="pause"><i class="fa-solid fa-pause"></i></span>
+    </button>
+    <!-- <a name="" id="" class="btn btn-primary" href="#" role="button">Like</a>
+    <a name="" id="" class="btn btn-primary" href="#" role="button">Donwlnload playlist</a>
+    <a name="" id="" class="btn btn-primary" href="#" role="button">Edit Playlist</a> -->
+  </div>
+</div>
+
+<div class="mt-3">
+  <div class="table-responsive">
+    <table class="playlist-table">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">name</th>
+          <th scope="col">listen count</th>
+          <th scope="col">time</th>
+          <th scope="col">date created</th>
+        </tr>
+      </thead>
+      <tbody>
+
+        <% tracks.forEach((e, id) => { %>
+        <tr class="track context-target" id="<%= e.track_key %>" el-type="track" owner="<%= e.is_your_track %>" playlist="<%= playlist.slug %>">
+          <td><%= id + 1 %></td>
+          <td>
+            <div class="track-container">
+              <img class="playlist-image me-1" src="<%= e.image_path %>" alt="image" style="width: 6vh; height: 6vh">
+              <span>
+                <p><strong><%= e.name %></strong></p>
+                <!-- TODO make a href to artist playlist -->
+                <p><%= e.artist %></p>
+              </span>
+            </div>
+          </td>
+          <td><%= e.listen_count %></td>
+          <td><%= e.duration %></td>
+          <td><%= (new Date(e.dt_created)).toLocaleDateString('lv-LV', { day: '2-digit',month: '2-digit',year: 'numeric'}); %></td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</div>

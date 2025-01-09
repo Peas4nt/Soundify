@@ -1,0 +1,40 @@
+<form id="create-track-form" class="container my-4">
+	<div class="mb-3 row">
+		<label for="track-file" class="col-sm-3 col-form-label">Audio File</label>
+		<div class="col-sm-9">
+			<input type="file" class="form-control" id="trackFile" name="trackFile" accept="audio/*" required />
+		</div>
+	</div>
+
+	<div class="mb-3 row">
+		<label for="track-image" class="col-sm-3 col-form-label">Cover Image</label>
+		<div class="col-sm-9">
+			<input type="file" class="form-control" id="trackImage" name="trackImage" accept="image/*" required />
+		</div>
+	</div>
+
+	<div class="mb-3 row">
+		<label for="track-file" class="col-sm-3 col-form-label">Image preview</label>
+		<div class="col-sm-9 d-flex align-items-end">
+			<img src="/images/album.jpg" class="track-img-preview rounded me-3" style="height: 15vh" alt="logo" />
+			<img src="/images/album.jpg" class="track-img-preview rounded me-3" style="height: 10vh" alt="logo" />
+			<img src="/images/album.jpg" class="track-img-preview rounded me-3" style="height: 5vh" alt="logo" />
+		</div>
+	</div>
+
+	<div class="mb-3 row">
+		<label for="track-name" class="col-sm-3 col-form-label">Track Name</label>
+		<div class="col-sm-9">
+			<input type="text" class="form-control" id="trackName" name="trackName" value="Track name" required />
+		</div>
+	</div>
+
+	<div class="mb-3 row">
+		<label for="artist_id" class="col-sm-3 col-form-label">Artist</label>
+		<div class="col-sm-9">
+			<input type="text" class="form-control" id="artist" name="artist" value="You are creator" required />
+		</div>
+	</div>
+
+	<button type="submit" id="submitBtn" class="btn btn-primary w-100">Create Track</button>
+</form>

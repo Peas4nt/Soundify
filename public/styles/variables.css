@@ -1,0 +1,23 @@
+:root {
+  --bs-primary: #e4bf45;
+  --bs-link-color-rgb: #7f8c8d;
+
+  --bs-tertiary-bg: #535353;
+  /* --bs-success:;
+  --bs-danger:; */
+  --bs-btn-active-bg: var(--bs-link-color-rgb);
+  
+  --bs-body-color: #ffffff;
+  --bs-body-bg: #111111;
+
+  --color-text-secondary: #7f8c8d;
+  
+  --color-text-inverse: #000000;
+
+  --color-background-dark: #000000;
+  --color-background-dark-second: #111111;
+  --color-background-dark-third: #535353;
+
+  --border-radius-large: 16px;
+  --box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.3);
+}

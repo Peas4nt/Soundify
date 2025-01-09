@@ -1,0 +1,434 @@
+<!-- MetisMenu v3.0.7 -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/metisMenu/3.0.7/metisMenu.min.js" integrity="sha512-o36qZrjup13zLM13tqxvZTaXMXs+5i4TL5UWaDCsmbp5qUcijtdCFuW9a/3qnHGfWzFHBAln8ODjf7AnUNebVg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<!-- Splide v4.1.4 -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/splidejs/4.1.4/js/splide.min.js" integrity="sha512-4TcjHXQMLM7Y6eqfiasrsnRCc8D/unDeY1UGKGgfwyLUCTsHYMxF7/UHayjItKQKIoP6TTQ6AMamb9w2GMAvNg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<!-- Select2 v4.0.13 -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js" integrity="sha512-2ImtlRlf2VVmiGZsjm9bEyhjGW4dU7B6TNwh/hx/iSByxNENtj3WVE6o/9Lj4TJeVXPi4bnOIMXFIJJAeufa0A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<!-- BootBox v6.0.0 -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/6.0.0/bootbox.min.js" integrity="sha512-oVbWSv2O4y1UzvExJMHaHcaib4wsBMS5tEP3/YkMP6GmkwRJAa79Jwsv+Y/w7w2Vb/98/Xhvck10LyJweB8Jsw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<!-- Jquery contextmenu v2.9.2 -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.9.2/jquery.contextMenu.min.js" integrity="sha512-kvg/Lknti7OoAw0GqMBP8B+7cGHvp4M9O9V6nAYG91FZVDMW3Xkkq5qrdMhrXiawahqU7IZ5CNsY/wWy1PpGTQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script src="/scripts/trackUpload.js"></script>
+<script src="/scripts/trackPlayer.js"></script>
+
+<script>
+  let likedTracks = <%- likedTracks %>;
+  let likedPlaylist = <%- likedPlaylist %>;
+  let userPlaylists = <%- userPlaylists %>;
+
+  let menu = {};
+
+  // track player controls
+  const trackPlayer = new TrackPlayer();
+
+  $(document).ready(function() {
+    // Context menu initialization
+    $.contextMenu({
+      selector: '.context-target',
+      zIndex: 20,
+      build: function($triggerElement, e) {
+        const elementId = parseInt($triggerElement.attr('id'));
+        const elementType = $triggerElement.attr('el-type');
+        const elementOwner = $triggerElement.attr('owner');
+
+        console.log(elementId + ' : ' + elementType);
+
+        // add default items to menu
+        menu = {
+          callback: function(key, options) {
+            console.log(key + '  ' + options);
+            // call function using a key from context menu item
+            menuFunctions[key](elementId, options);
+          },
+          items: {
+            playlistCreate: {
+              name: "Create playlist",
+              icon: "fa-solid fa-plus"
+            }
+          }
+        };
+
+        // add special items to menu
+        if (elementType === 'playlist') {
+          if (elementOwner == 1) {
+            menu.items.editPlaylist = {
+              name: "Edit playlist",
+              icon: "fa-solid fa-pen-to-square"
+            }
+          } else {
+            menu.items.likePlaylist = {
+              name: "Like this playlist",
+              icon: "fa-solid fa-thumbs-up",
+              type: "checkbox",
+              selected: likedPlaylist[elementId] || false,
+              events: {
+                'click': function(event) {
+                  const $checkbox = $(this).find('input');
+
+                  menu.callback('likePlaylist', '');
+                }
+              },
+              html: function() {
+                const checked = this.selected ? 'checked' : '';
+                return `
+                <div class="custom-checkbox">
+                  <input type="checkbox" ${checked} id="likePlaylist-${this.data.elementId}" />
+                  <label for="likePlaylist-${this.data.elementId}"></label>
+                </div>
+              `;
+              }
+            }
+          }
+        } else if (elementType === 'track') {
+          menu.items.likeTrack = {
+            name: "Like",
+            icon: "fa-solid fa-thumbs-up",
+            type: 'checkbox',
+            selected: likedTracks.includes(elementId) || false,
+            events: {
+              'click': function(event) {
+                const $checkbox = $(this).find('input');
+
+                menu.callback('likeTrack', '');
+              }
+            },
+            html: function() {
+              const checked = this.selected ? 'checked' : '';
+              return `
+                <div class="custom-checkbox">
+                  <input type="checkbox" ${checked} id="likeTrack-${this.data.elementId}" />
+                  <label for="likeTrack-${this.data.elementId}"></label>
+                </div>
+              `;
+            }
+          }
+
+          menu.items.AddTrackToPlaylist = {
+            name: "Add track to playlist",
+            icon: "fa-solid fa-plus",
+            items: getPlaylistAddTrackMenu(elementId)
+          }
+
+          if (elementOwner == 1) {
+            menu.items.editPlaylist = {
+              name: "Edit track",
+              icon: "fa-solid fa-pen-to-square"
+            }
+          }
+        }
+
+        return menu;
+      },
+    });
+  });
+
+  const menuFunctions = {
+    playlistCreate: () => {
+      bootbox.dialog({
+        title: "Create playlist",
+        message: `
+          <form id="playlistForm">
+            <div class="row align-items-center mb-3 settings-row">
+              <label for="image" class="col-4 col-form-label">Image:</label>
+              <div class="col-8">
+                <input type="file" class="form-control" name="image" id="image" />
+              </div>
+            </div>
+
+            <div class="row align-items-center mb-3 settings-row">
+              <label for="track-file" class="col-sm-4 col-form-label">Image preview</label>
+              <div class="col-sm-8 d-flex align-items-end">
+                <img src="/images/album.jpg" class="track-img-preview rounded me-3" style="height: 15vh" alt="logo" />
+                <img src="/images/album.jpg" class="track-img-preview rounded me-3" style="height: 10vh" alt="logo" />
+                <img src="/images/album.jpg" class="track-img-preview rounded me-3" style="height: 5vh" alt="logo" />
+              </div>
+            </div>
+
+            <div class="row align-items-center mb-3 settings-row">
+              <label for="name" class="col-4 col-form-label">Playlist name:</label>
+              <div class="col-8">
+                <input type="text" class="form-control" name="name" id="name" />
+              </div>
+            </div>
+
+            <div class="row align-items-center mb-3 settings-row">
+              <label for="description" class="col-4 col-form-label">Description:</label>
+              <div class="col-8">
+                <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+              </div>
+            </div>
+          </form>
+        `,
+        size: 'large',
+        buttons: {
+          confirm: {
+            label: "Yes",
+            className: "btn-success",
+            callback: function() {
+              const $form = $('#playlistForm');
+              const formData = new FormData($form[0]);
+
+              savePlaylist(formData);
+            },
+          },
+          cancel: {
+            label: "No",
+            className: "btn-danger",
+          },
+        },
+      });
+
+      $("#image").on("change", function(event) {
+        const file = event.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            $(".track-img-preview").each((i, elem) => {
+              $(elem).attr("src", e.target.result);
+            });
+          };
+          reader.readAsDataURL(file);
+        } else {
+          $("#imagePreview").hide();
+        }
+      });
+    },
+    likePlaylist: (key) => {
+      let likeStatus = true;
+
+      console.log('Like Playlist');
+
+      // if (likedPlaylist.includes(key)) {
+      //   const index = likedPlaylist.indexOf(key);
+      //   likedPlaylist.splice(index, 1);
+      //   likeStatus = false;
+      // } else {
+      //   likedPlaylist.push(key);
+      // }
+
+      if (likedPlaylist[key]) {
+        delete likedPlaylist[key]
+        likeStatus = false;
+      }
+
+      const formData = new FormData();
+      formData.append("key", key);
+
+      $.ajax({
+        type: "POST",
+        url: "/playlist/like",
+        data: formData,
+        dataType: "JSON",
+        processData: false,
+        contentType: false,
+        success: function(response) {
+          // playlists liked
+          if (likeStatus) {
+            likedPlaylist[key] = {
+              tracks: response.data.tracks,
+              image_path: response.data.image_path
+            }
+
+            const $playlist = $(`
+            <li class="context-target" id="${response.data.playlist_key}">
+              <a href="/playlist/${response.data.slug}" data-link>
+                <div class="parent-icon"><img class="playlist-image" src="${response.data.image_path}" alt="playlist" /></div>
+                <div class="menu-title">${response.data.name}</div>
+              </a>
+            </li>
+            `)
+
+            $playlist.find('a[data-link]').click(spaHref);
+
+            $('.sidebar-playlists').append($playlist);
+          } else {
+            $(`.sidebar-playlists #${key}`).remove();
+          }
+
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+          console.log(errorThrown);
+        }
+      });
+      // TODO update sidebar playlists
+    },
+    likeTrack: (key) => {
+      console.log('Like Track');
+      console.log(key);
+
+      // likedTracks
+      let likeStatus = true;
+
+      if (likedTracks.includes(key)) {
+        const index = likedTracks.indexOf(key);
+        likedTracks.splice(index, 1);
+        likeStatus = false;
+      } else {
+        likedTracks.push(key);
+      }
+
+      const formData = new FormData();
+      formData.append("key", key);
+
+      $.ajax({
+        type: "POST",
+        url: "/track/like",
+        data: formData,
+        dataType: "JSON",
+        processData: false,
+        contentType: false,
+        // success: function(response) {
+        //   // playlists liked
+        //   if (likeStatus) {
+        //     likedPlaylist[key] = {
+        //       tracks: response.data.tracks,
+        //       image_path: response.data.image_path
+        //     }
+
+        //     const $playlist = $(`
+        //     <li id="${response.data.playlist_key}">
+        //       <a href="/playlist/${response.data.slug}" data-link>
+        //         <div class="parent-icon"><img class="playlist-image" src="${response.data.image_path}" alt="playlist" /></div>
+        //         <div class="menu-title">${response.data.name}</div>
+        //       </a>
+        //     </li>
+        //     `)
+
+        //     $('.sidebar-playlists').append($playlist);
+        //   } else {
+        //     $(`.sidebar-playlists #${key}`).remove();
+        //   }
+
+        // },
+        // error: function(jqXHR, textStatus, errorThrown) {
+        //   console.log(errorThrown);
+        // }
+      });
+    },
+    addTrackToPLaylist: (key, options) => {
+      const trackKey = key;
+      const playlistKey = options;
+      let playlistArrKey = 0;
+      let found = false;
+
+      for (const key in userPlaylists) {
+        const playlist = userPlaylists[key];
+
+        if (playlist.playlist_key == options) {
+          found = true;
+          playlistArrKey = key
+          break
+        }
+      }
+
+      if (found) {
+        if (userPlaylists[playlistArrKey].tracks.includes(trackKey)) {
+          const index = userPlaylists[playlistArrKey].tracks.indexOf(trackKey);
+          userPlaylists[playlistArrKey].tracks.splice(index, 1);
+        } else {
+          userPlaylists[playlistArrKey].tracks.push(trackKey);
+        }
+        const formData = new FormData();
+
+        formData.append("track_key", trackKey);
+        formData.append("playlist_key", playlistKey);
+
+        $.ajax({
+          type: "POST",
+          url: "/playlist/addtrack",
+          data: formData,
+          dataType: "JSON",
+          processData: false,
+          contentType: false,
+          success: function(response) {
+            console.log('track added successfully');
+          },
+          error: function(jqXHR, textStatus, errorThrown) {
+            console.log(errorThrown);
+          }
+        });
+      } else {
+        console.log('error');
+      }
+    }
+  }
+
+
+  function savePlaylist(formData) {
+    console.log('Playlist saved');
+    $(".loader").show();
+
+    $.ajax({
+      type: "POST",
+      url: "/playlist",
+      data: formData,
+      dataType: "JSON",
+      processData: false,
+      contentType: false,
+      success: function(response) {
+        $(".loader").hide();
+
+        // TODO add playlist to sidebar playlists
+      },
+      error: function(jqXHR, textStatus, errorThrown) {
+        console.log(errorThrown);
+      }
+    });
+  }
+
+  function getPlaylistAddTrackMenu(trackKey) {
+    let items = {};
+
+    for (const key in userPlaylists) {
+      if (userPlaylists.hasOwnProperty(key)) {
+        const playlist = userPlaylists[key];
+
+        items[key] = {
+          // name: playlist.name,
+          icon: (opt, $itemElement, itemKey, item) => {
+            const $span = $itemElement.find('span')
+            $span.html('');
+            $span.append(`
+              <div class="track-container">
+                <img class="playlist-image me-1" 
+                     src="${playlist.image_path}" 
+                     alt="image" 
+                     style="width: 3vh; height: 3vh; object-fit: cover;">
+                <span>
+                    <strong>${playlist.name}</strong>
+                </span>
+              </div>
+            `)
+          },
+          type: 'checkbox',
+          selected: playlist.tracks?.includes(trackKey) || false,
+          events: {
+            'click': function(event) {
+              const $checkbox = $(this).find('input');
+
+              menu.callback('addTrackToPLaylist', playlist.playlist_key);
+            }
+          },
+          html: function() {
+            const checked = this.selected ? 'checked' : '';
+            return `
+                <div class="custom-checkbox">
+                  <input type="checkbox" ${checked} id="likePlaylist-${this.data.elementId}" />
+                  <label for="likePlaylist-${this.data.elementId}"></label>
+                </div>
+              `;
+          }
+        }
+      }
+    }
+
+    return items;
+  }
+</script>
+
+<script src="/scripts/initScript.js"></script>

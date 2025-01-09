@@ -1,0 +1,40 @@
+<script>
+	let showPass1 = true;
+	let showPass2 = true;
+
+	$("#inputChoosePassword")
+		.parent()
+		.find(".show-pass-btn")
+		.on("click", (e) => {
+			e.preventDefault();
+			console.log("Check event");
+			showPass1 = !showPass1;
+			showPassEvent("#inputChoosePassword", showPass1, e.currentTarget);
+		});
+
+	$("#inputChoosePassword2")
+		.parent()
+		.find(".show-pass-btn")
+		.on("click", (e) => {
+			e.preventDefault();
+			showPass2 = !showPass2;
+			showPassEvent("#inputChoosePassword2", showPass2, e.currentTarget);
+		});
+
+	function showPassEvent(passwordInputSelector, isVisible, toggleBtn) {
+		const $input = $(passwordInputSelector);
+		const $eyeIcon = $(toggleBtn).find("#show-pass");
+		const $eyeSlashIcon = $(toggleBtn).find("#hide-pass");
+		if (isVisible) {
+			$input.attr("type", "text");
+			$eyeIcon.show();
+			$eyeSlashIcon.hide();
+		} else {
+			$input.attr("type", "password");
+			$eyeIcon.hide();
+			$eyeSlashIcon.show();
+		}
+	}
+
+	$(".show-pass-btn").trigger("click")
+</script>

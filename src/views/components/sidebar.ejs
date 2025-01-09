@@ -1,0 +1,60 @@
+<aside class="sidebar-wrapper context-target" data-simplebar="true">
+  <div class="sidebar-header">
+    <div class="logo-icon">
+      <img src="/images/logo.png" class="logo-img" alt="" />
+    </div>
+    <div class="logo-name flex-grow-1">
+      <h5 class="mb-0">Soundify</h5>
+    </div>
+    <div class="sidebar-close">
+      <i class="fa-solid fa-xmark fa-lg"></i>
+    </div>
+  </div>
+  <div class="sidebar-nav">
+    <!--navigation-->
+    <ul id="sidenav">
+      <li>
+        <a href="/" data-link>
+          <div class="parent-icon"><i class="fa-solid fa-house fa-xl"></i></div>
+          <div class="menu-title">HOME</div>
+        </a>
+      </li>
+
+      <li>
+        <a href="/uploadtrack" data-link>
+          <div class="parent-icon"><i class="fa-solid fa-upload fa-xl"></i></div>
+          <div class="menu-title">Upload Track</div>
+        </a>
+      </li>
+
+      <li>
+        <a href="/playlist/mytracks" data-link>
+          <div class="parent-icon"><i class="fa-solid fa-music fa-xl"></i></div>
+          <div class="menu-title">My Tracks</div>
+        </a>
+      </li>
+
+      <li>
+        <a href="/playlist/likedtracks_<%= user.key %>" data-link>
+          <div class="parent-icon"><i class="fa-solid fa-heart fa-xl"></i></div>
+          <div class="menu-title">Liked Tracks</div>
+        </a>
+      </li>
+
+      <hr />
+
+      <div class="sidebar-playlists">
+        <% allUserPlaylists.forEach(e => { %>
+        <li class="context-target" id="<%= e.playlist_key %>" el-type="playlist" owner="<%= e.is_your_playlist%>">
+          <a href="/playlist/<%= e.slug %>"  data-link>
+            <div class="parent-icon"><img class="playlist-image" src="<%= e.image_path %>" alt="playlist" /></div>
+            <div class="menu-title"><%= e.name %></div>
+          </a>
+        </li>
+        <% }) %>
+      </div>
+
+    </ul>
+    <!--end navigation-->
+  </div>
+</aside>
