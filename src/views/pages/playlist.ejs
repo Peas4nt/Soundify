@@ -1,9 +1,9 @@
 <div class="playlist-container">
   <div class="playlist-info d-flex m-2">
-    <img class="playlist-image me-3" style="width: 20vh; height: 20vh" src="<%= playlist.image_path %>" alt="image" />
+    <img class="playlist-image me-3" style="width: 20vh; height: 20vh" src="<%= playlist.image_path %>" alt="image" onerror="getDafaultPlaylistImage(this)"/>
     <div>
       <h2><%= playlist.name %></h2>
-      <h4><%= playlist.username %></h4>
+      <h4><a href="/profile/<%= playlist.user_key %>" data-link><%= playlist.username %></a></h4>
       <p><%= playlist.description %></p>
     </div>
   </div>

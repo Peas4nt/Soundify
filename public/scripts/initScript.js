@@ -2,18 +2,14 @@ $(".loader").show();
 $(document).ready(function () {
 	$("#sidenav").metisMenu();
 
+	// set sibar value
+	if (sidebarValue) toggleSidebar(true);
+
 	$(".btn-toggle").click(function () {
-		$("body").hasClass("toggled")
-			? ($("body").removeClass("toggled"), $(".sidebar-wrapper").unbind("hover"))
-			: ($("body").addClass("toggled"),
-			  $(".sidebar-wrapper").hover(
-					function () {
-						$("body").addClass("sidebar-hovered");
-					},
-					function () {
-						$("body").removeClass("sidebar-hovered");
-					},
-			  ));
+		const isToggled = $("body").hasClass("toggled");
+		toggleSidebar(!isToggled);
+
+		if ($(window).width() >= 1199) saveUserData('is_sidebar_closed', !isToggled);
 	});
 
 	$(".sidebar-close").on("click", function () {
@@ -29,7 +25,7 @@ $(document).ready(function () {
 	});
 
 	for (
-		var e = window.location,
+		let e = window.location,
 			o = $(".metismenu li a")
 				.filter(function () {
 					return this.href == e;
@@ -56,6 +52,32 @@ $(document).ready(function () {
 		}
 	};
 });
+
+function toggleSidebar(state) {
+	if (state) {
+		$("body").addClass("toggled");
+		$(".sidebar-wrapper").hover(
+			function () {
+				$("body").addClass("sidebar-hovered");
+				$(".sidebar-playlists").css({
+					"overflow-y": "auto",
+				});
+			},
+			function () {
+				$("body").removeClass("sidebar-hovered");
+				$(".sidebar-playlists").css({
+					"overflow-y": "hidden",
+				});
+			},
+		);
+		$(".sidebar-playlists").css({
+			"overflow-y": "hidden",
+		});
+	} else {
+		$("body").removeClass("toggled");
+		$(".sidebar-wrapper").unbind("hover");
+	}
+}
 
 function spaHref(event) {
 	event.preventDefault();
@@ -99,6 +121,8 @@ function pageInit(url) {
 	if (url == "") {
 		splideInit();
 		spaLinkEventInit();
+		trackPlayer.playlistStartBtnInit();
+		trackPlayer.reloadPlaylistPlayBtn();
 	} else if (url == "profile") {
 		splideInit();
 	} else if (url == "uploadtrack") {
@@ -109,12 +133,14 @@ function pageInit(url) {
 		trackPlayer.trackStartBtnInit();
 		trackPlayer.reloadPlaylistPlayBtn();
 		trackPlayer.reloadActivetrack();
+		spaLinkEventInit();
+	} else if (url == "settings") {
+		settingsPageInit()
 	}
 }
 
 function splideInit() {
 	// initialize a splides for main menu
-	// @TODO
 	// fix a splide perPage bug
 	const sliders = document.querySelectorAll(".splide");
 	sliders.forEach((slider) => {
@@ -141,7 +167,7 @@ function spaLinkEventInit() {
 }
 
 // show messages
-function showAlert(message, func) {
+function showAlert(message, func = () => {}) {
 	bootbox.alert({
 		message: message,
 		callback: function () {
@@ -152,12 +178,14 @@ function showAlert(message, func) {
 
 function showDialog(message, func) {
 	bootbox.dialog({
-		message: "Do you want upload track?",
+		message: message,
 		buttons: {
 			confirm: {
 				label: "Yes",
 				className: "btn-success",
-				callback: func()
+				callback: function () {
+					func();
+				},
 			},
 			cancel: {
 				label: "No",

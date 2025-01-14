@@ -1,113 +1,159 @@
 <div class="container my-4">
-	<!-- Privacy settings -->
-	<form class="mb-4">
-		<h3>Privacy Settings</h3>
-		<div class="row align-items-center mb-3 settings-row">
-			<label class="col-8 col-form-label" for="show-favorites">Show favorite tracks</label>
-			<div class="col-4">
+  <!-- Privacy settings -->
+  <form class="mb-4" id="privacy_inputs">
+    <h3>Privacy Settings</h3>
+    <div class="row align-items-center mb-3 settings-row">
+      <label class="col-8 col-form-label" for="private-profile">Private Profile</label>
+      <div class="col-4">
         <label class="switch">
-          <input type="checkbox" id="show-favorites" checked>
+          <input type="checkbox" id="private-profile" name="private_profile" <%= settings.private_profile? 'checked' : ''%>>
           <div class="slider"></div>
           <div class="slider-card">
             <div class="slider-card-face slider-card-front"></div>
             <div class="slider-card-face slider-card-back"></div>
           </div>
         </label>
-			</div>
-		</div>
-
-		<div class="row align-items-center mb-3 settings-row">
-			<label class="col-8 col-form-label" for="show-listen-history">Show listening history</label>
-			<div class="col-4">
-        <label class="switch">
-          <input type="checkbox" id="show-listen-history">
-          <div class="slider"></div>
-          <div class="slider-card">
-            <div class="slider-card-face slider-card-front"></div>
-            <div class="slider-card-face slider-card-back"></div>
-          </div>
-        </label>
-			</div>
-		</div>
+      </div>
+    </div>
 
     <div class="row align-items-center mb-3 settings-row">
-			<label class="col-8 col-form-label" for="show-top-tracks">Show you top 10 tracks</label>
-			<div class="col-4">
+      <label class="col-8 col-form-label" for="private-liked-tracks">Private Liked Tracks</label>
+      <div class="col-4">
         <label class="switch">
-          <input type="checkbox" id="show-top-tracks">
+          <input type="checkbox" id="private-liked-tracks" name="private_liked_tracks" <%= settings.private_liked_tracks? 'checked' : ''%>>
           <div class="slider"></div>
           <div class="slider-card">
             <div class="slider-card-face slider-card-front"></div>
             <div class="slider-card-face slider-card-back"></div>
           </div>
         </label>
-			</div>
-		</div>
+      </div>
+    </div>
 
     <div class="row align-items-center mb-3 settings-row">
-			<label class="col-8 col-form-label" for="show-other-playlists">Show your liked playlists</label>
-			<div class="col-4">
+      <label class="col-8 col-form-label" for="private-recent-track">Private Recent Track</label>
+      <div class="col-4">
         <label class="switch">
-          <input type="checkbox" id="show-other-playlists">
+          <input type="checkbox" id="private-recent-track" name="private_recent_track" <%= settings.private_recent_track? 'checked' : ''%>>
           <div class="slider"></div>
           <div class="slider-card">
             <div class="slider-card-face slider-card-front"></div>
             <div class="slider-card-face slider-card-back"></div>
           </div>
         </label>
-			</div>
-		</div>
+      </div>
+    </div>
 
     <div class="row align-items-center mb-3 settings-row">
-			<label class="col-8 col-form-label" for="show-my-playlists">Show your (created)playlists</label>
-			<div class="col-4">
+      <label class="col-8 col-form-label" for="private-show-my-playlists">Private Show My Playlists</label>
+      <div class="col-4">
         <label class="switch">
-          <input type="checkbox" id="show-my-playlists" checked>
+          <input type="checkbox" id="private-show-my-playlists" name="private_show_my_playlits" <%= settings.private_show_my_playlits? 'checked' : ''%>>
           <div class="slider"></div>
           <div class="slider-card">
             <div class="slider-card-face slider-card-front"></div>
             <div class="slider-card-face slider-card-back"></div>
           </div>
         </label>
-			</div>
-		</div>
+      </div>
+    </div>
 
     <div class="row align-items-center mb-3 settings-row">
-			<label class="col-8 col-form-label" for="show-my-friends">Show my friends</label>
-			<div class="col-4">
+      <label class="col-8 col-form-label" for="private-show-recent-playlists">Private Show Recent Played Playlists</label>
+      <div class="col-4">
         <label class="switch">
-          <input type="checkbox" id="show-my-friends" checked>
+          <input type="checkbox" id="private-show-recent-playlists" name="private_show_recent_played_playlists" <%= settings.private_show_recent_played_playlists? 'checked' : ''%>>
           <div class="slider"></div>
           <div class="slider-card">
             <div class="slider-card-face slider-card-front"></div>
             <div class="slider-card-face slider-card-back"></div>
           </div>
         </label>
-			</div>
-		</div>
-	</form>
-	<hr />
-	<!-- Profile settings -->
-	<form>
-		<h3>Account Settings</h3>
-		<div class="row align-items-center mb-3 settings-row">
-			<label for="username" class="col-4 col-form-label">Username</label>
-			<div class="col-8">
-				<input type="text" class="form-control" id="username" placeholder="Username" />
-			</div>
-		</div>
-		<div class="row align-items-center mb-3 settings-row">
-			<label for="avatar" class="col-4 col-form-label">Avatar</label>
-			<div class="col-8">
-				<input type="file" class="form-control" id="avatar" />
-			</div>
-		</div>
-		<div class="row align-items-center mb-3 settings-row">
-			<label for="password" class="col-4 col-form-label">Password</label>
-			<div class="col-8">
-				<input type="password" class="form-control" id="password" placeholder="Enter new password" />
-			</div>
-		</div>
-		<div><input type="button" class="btn btn-outline-primary" value="Submit" /></div>
-	</form>
+      </div>
+    </div>
+  </form>
+  <hr />
+  <!-- Profile settings -->
+  <h3>Account Settings</h3>
+  <!-- Username change -->
+  <form class="mb-3 w-100 settings-form" id="username">
+    <div class="row align-items-center mb-3 settings-row">
+      <label for="username" class="col-sm-4 col-form-label">Username</label>
+      <div class="col-sm-8">
+        <input type="text" class="form-control" name="username" placeholder="Username" value="<%= settings.username %>" required />
+        <div class="text-danger"></div>
+      </div>
+    </div>
+
+    <div class="mb-3 row"><input type="submit" class="col-sm-3 btn btn-outline-primary" value="Change username" /></div>
+  </form>
+
+  <!-- Avatar change -->
+  <form class="mb-3 w-100 settings-form" id="image">
+
+    <div class="row align-items-center mb-3 settings-row">
+      <label for="avatar" class="col-sm-4 col-form-label">Avatar</label>
+      <div class="col-sm-8 ">
+        <input type="file" class="form-control" name="image" accept="image/*" required />
+      </div>
+    </div>
+
+    <div class=" mb-3 row">
+        <label for="track-file" class="col-sm-4 col-form-label">Image preview</label>
+        <div class="col-sm-8 d-flex align-items-end">
+          <img src="<%= settings.image_path %>" class="avatar-img-preview rounded me-3" style="height: 15vh" alt="logo" onerror="getDafaultProfileImage(this)" />
+          <img src="<%= settings.image_path %>" class="avatar-img-preview rounded me-3" style="height: 10vh" alt="logo" onerror="getDafaultProfileImage(this)" />
+          <img src="<%= settings.image_path %>" class="avatar-img-preview rounded me-3" style="height: 5vh" alt="logo" onerror="getDafaultProfileImage(this)" />
+        </div>
+      </div>
+
+      <div class="mb-3 row"><input type="submit" class="col-sm-3 btn btn-outline-primary" value="Change avatar" /></div>
+  </form>
+
+
+  <form class="mb-3 w-100 settings-form" id="password">
+    <div class="row align-items-center mb-3 settings-row">
+      <label for="password" class="col-sm-4 col-form-label">New password</label>
+      <div class="col-sm-8">
+        <div class="input-group">
+          <input type="password" class="form-control" name="new_password" placeholder="Enter new password" required />
+          <a class="input-group-text bg-transparent show-pass-btn">
+            <i class="fa-solid fa-eye-slash" id="hide-pass"></i>
+            <i class="fa-solid fa-eye" id="show-pass"></i>
+          </a>
+        </div>
+        <div class="text-danger"></div>
+      </div>
+    </div>
+
+    <div class="row align-items-center mb-3 settings-row">
+      <label for="password" class="col-sm-4 col-form-label">Repeat new password</label>
+      <div class="col-sm-8">
+        <div class="input-group">
+          <input type="password" class="form-control" name="new_password_confirm" placeholder="Enter new password" required />
+          <a class="input-group-text bg-transparent show-pass-btn">
+            <i class="fa-solid fa-eye-slash" id="hide-pass"></i>
+            <i class="fa-solid fa-eye" id="show-pass"></i>
+          </a>
+        </div>
+        <div class="text-danger"></div>
+      </div>
+    </div>
+
+    <div class="row align-items-center mb-3 settings-row">
+      <label for="password" class="col-sm-4 col-form-label">Old password</label>
+      <div class="col-sm-8">
+        <div class="input-group">
+          <input type="password" class="form-control" name="password" placeholder="Enter old password" required />
+          <a class="input-group-text bg-transparent show-pass-btn">
+            <i class="fa-solid fa-eye-slash" id="hide-pass"></i>
+            <i class="fa-solid fa-eye" id="show-pass"></i>
+          </a>
+        </div>
+        <div class="text-danger"></div>
+      </div>
+    </div>
+
+    <div class="mb-3 row"><input type="submit" class="col-sm-3 btn btn-outline-primary" value="Change password" /></div>
+  </form>
 </div>

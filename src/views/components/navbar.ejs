@@ -8,13 +8,13 @@
 		<ul class="navbar-nav gap-1 align-items-center w-100">
 			<li class="nav-item dropdown ms-auto">
 				<a href="javascrpt:;" class="dropdown-toggle dropdown-toggle-nocaret" data-bs-toggle="dropdown">
-					<img src="/images/default_profile.png" class="rounded-circle p-1" width="45" height="45" alt="" />
+					<img src="<%= process.env.IMAGE_PATH + user.image_path %>" class="user-image rounded-circle p-1" width="45" height="45" alt="" onerror="getDafaultProfileImage(this)"/>
 				</a>
 				<div class="dropdown-menu dropdown-user dropdown-menu-end shadow">
 					<a class="dropdown-item gap-2 py-2" href="javascript:;">
 						<div class="text-center">
-							<img src="/images/default_profile.png" class="rounded-circle p-1 shadow mb-3" width="90" height="90" alt="" />
-							<h5 class="user-name mb-0 fw-bold">Hello, <%= user.username %></h5>
+							<img src="<%= process.env.IMAGE_PATH + user.image_path %>" class="user-image rounded-circle p-1 shadow mb-3" width="90" height="90" alt="" onerror="getDafaultProfileImage(this)"/>
+							<h5 class="mb-0 fw-bold">Hello, <span class="user-name"><%= user.username %></span></h5>
 						</div>
 					</a>
 					<hr class="dropdown-divider" />

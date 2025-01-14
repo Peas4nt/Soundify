@@ -1,5 +1,5 @@
 class TrackPlayer {
-	constructor() {
+	constructor(recentTrackKey = null, recentPlaylistSlug = null, userData = {}) {
 		// buttons
 		this.nextButton = $("#btn-next");
 		this.previousButton = $("#btn-prev");
@@ -17,10 +17,11 @@ class TrackPlayer {
 		this.volumeButton = $("#mute-volume");
 		this.volumeSlider = $("#music-volume");
 
+		this.trackInfo = $(".track-info");
 		this.trackImage = $(".track-info #track-img");
 		this.trackName = $(".track-info #track-name");
 		this.trackArtist = $(".track-info #track-author");
-		this.trackPlaylsit = $(".track-info #track-playlist");
+		this.trackPlaylsit = $(".track-info #playlist-href");
 		this.trackAudio = $(".track-info #track");
 
 		// tracks data
@@ -30,20 +31,25 @@ class TrackPlayer {
 
 		this.isTrackPlaying = false;
 
-		this.isShuffle = false;
-		this.isRepeat = false;
+		this.isShuffle = userData?.shuffle_value || false;
+		this.isRepeat = userData?.repeat_value || false;
 
 		this.nextTrackIndex = null;
 		this.playingTrackKey = null;
 		this.playingPlaylistSlug = null;
 		this.playingPlaylstKey = null;
 
-		this.volume = 0.2;
+		this.volume = parseFloat(userData?.volume_value) || 0.2;
+
+		console.log(userData);
 
 		this.initControls();
+		// recent track loading
+		if (recentTrackKey && recentPlaylistSlug) this.playPlaylist(recentPlaylistSlug, recentTrackKey, false);
 	}
 	initControls() {
 		const that = this;
+		let saveTimeout;
 
 		// Play/Pause functionality
 		this.playButton.on("click", function () {
@@ -78,16 +84,20 @@ class TrackPlayer {
 			});
 		});
 
+		this.trackAudio.onloadeddata = () => {
+			this.updateTime();
+		};
+
 		// Next track
 		this.nextButton.on("click", function () {
 			that.nextTrack();
-			setTimeout(() => that.playTrack(), 200);
+			that.playTrack();
 		});
 
 		// Previous track
 		this.previousButton.on("click", function () {
 			that.previousTrack();
-			setTimeout(() => that.playTrack(), 200);
+			that.playTrack();
 		});
 
 		// Update time slider during playback
@@ -123,11 +133,25 @@ class TrackPlayer {
 				that.trackAudio[0].muted = false;
 				that.updateVolumeIcon(false);
 			}
+
+			// save volume data
+			clearTimeout(saveTimeout);
+			saveTimeout = setTimeout(() => {
+				saveUserData("volume_value", $(this).val(), false);
+			}, 5000);
 		});
 
-		this.trackAudio.onloadeddata = () => {
-			this.updateTime();
-		};
+		this.repeatButton.on("change", function () {
+			that.isRepeat = $(this).is(":checked");
+			that.updateRepeatIcon();
+			saveUserData("repeat_value", that.isRepeat);
+		});
+
+		this.shuffleButton.on("change", function () {
+			that.isShuffle = $(this).is(":checked");
+			that.updateShuffleIcon();
+			saveUserData("shuffle_value", that.isShuffle);
+		});
 
 		this.trackAudio.on("canplaythrough", function () {
 			if (that.isTrackPlaying) {
@@ -135,7 +159,17 @@ class TrackPlayer {
 			}
 		});
 
+		this.trackAudio.on("error", function () {
+			that.nextTrack(true);
+			console.log("Track load error");
+		});
+
+		console.log("111111111111111111111");
+		console.log(this.volume);
+
 		this.setVolume(this.volume);
+		this.updateRepeatIcon();
+		this.updateShuffleIcon();
 	}
 
 	playTrack() {
@@ -150,16 +184,46 @@ class TrackPlayer {
 
 	nextTrack(auto = false) {
 		this.nextTrackIndex++;
-		if (this.nextTrackIndex == this.trackArr.length) this.nextTrackIndex = 0;
+		if (this.nextTrackIndex == this.trackArr.length) {
+			this.nextTrackIndex = 0;
+		}
+
+		this.playedTracks.push(this.playingTrackKey);
+
+		if (this.trackArr.length == this.playedTracks.length) {
+			this.playedTracks = [];
+		}
+
+		if (this.isShuffle) {
+			let trackArrIndex;
+			let trackKey;
+			do {
+				trackArrIndex = Math.floor(Math.random() * this.trackArr.length);
+				trackKey = this.trackArr[trackArrIndex];
+
+				console.log("Track key: ", trackKey);
+			} while (this.playedTracks.includes(trackKey));
+			this.nextTrackIndex = trackArrIndex;
+		}
+
 		this.getTrack();
 
 		if (!this.isRepeat && auto && this.nextTrackIndex == 0) this.pauseTrack();
-		else setTimeout(() => this.playTrack(), 200);
+		else this.playTrack();
 	}
 
 	previousTrack() {
 		this.nextTrackIndex--;
 		if (this.nextTrackIndex < 0) this.nextTrackIndex = this.trackArr.length - 1;
+
+		if (this.isShuffle) {
+			if (this.playedTracks.includes(this.playingTrackKey)) {
+				const index = this.playedTracks.indexOf(this.playingTrackKey);
+				this.playedTracks.splice(index, 1);
+			}
+			if (this.playedTracks.length != 0) this.nextTrackIndex = this.playedTracks.length - 1;
+		}
+
 		this.getTrack();
 	}
 
@@ -183,6 +247,7 @@ class TrackPlayer {
 	setVolume(value) {
 		this.trackAudio[0].volume = value;
 		this.volume = value;
+		this.volumeSlider.val(value);
 	}
 
 	setVolumeMute(isMuted) {
@@ -202,14 +267,44 @@ class TrackPlayer {
 		}
 	}
 
+	updateRepeatIcon() {
+		if (this.isRepeat) {
+			$("#music-loop-label").find(".checked").show();
+			$("#music-loop-label").find(".unchecked").hide();
+			$(this.repeatButton).prop("checked", true);
+		} else {
+			$("#music-loop-label").find(".checked").hide();
+			$("#music-loop-label").find(".unchecked").show();
+			$(this.repeatButton).prop("checked", false);
+		}
+	}
+
+	updateShuffleIcon() {
+		if (this.isShuffle) {
+			$("#music-random-label").find(".checked").show();
+			$("#music-random-label").find(".unchecked").hide();
+			$(this.shuffleButton).prop("checked", true);
+		} else {
+			$("#music-random-label").find(".checked").hide();
+			$("#music-random-label").find(".unchecked").show();
+			$(this.shuffleButton).prop("checked", false);
+		}
+	}
+
 	playlistStartBtnInit() {
 		const that = this;
 		$(".play-playlist").on("click", function (e) {
+			e.stopPropagation();
+			e.preventDefault();
 			const button = $(e.target).closest(".play-playlist");
 			const id = $(button).attr("id");
+			$(button).addClass(".active");
 
 			that.playPlaylist(id);
 		});
+
+		that.reloadPlaylistPlayBtn();
+		that.reloadAtivePlaylist();
 	}
 
 	trackStartBtnInit() {
@@ -224,7 +319,7 @@ class TrackPlayer {
 		});
 	}
 
-	async playPlaylist(playlistKey, trackKey = null) {
+	async playPlaylist(playlistKey, trackKey = null, playTrack = true) {
 		console.log(this.playingPlaylistSlug, "   ", playlistKey);
 
 		if (this.playingPlaylistSlug == playlistKey) {
@@ -255,16 +350,28 @@ class TrackPlayer {
 		});
 
 		if (data.status == "OK") {
+			if (!data.data.tracks || data.data.tracks.length == 0) {
+				showAlert("This playlist has no tracks");
+				return null;
+			}
 			this.trackArr = data.data.tracks;
 			this.playingPlaylistSlug = data.data.slug;
 			this.playingPlaylstKey = data.data.playlist_key;
+			this.playedTracks = [];
 
 			if (trackKey) this.nextTrackIndex = this.trackArr.indexOf(parseInt(trackKey));
 			else this.nextTrackIndex = 0;
 
 			this.trackPlaylsit.text(data.data.name || "No Playlist");
+
 			this.getTrack();
-			this.playTrack();
+
+			// reload active playlist btns
+			this.reloadAtivePlaylist();
+
+			if (playTrack) {
+				this.playTrack();
+			}
 		} else {
 			console.error("Failed to play playlist");
 		}
@@ -272,8 +379,9 @@ class TrackPlayer {
 
 	async getTrack() {
 		let trackArrIndex = this.nextTrackIndex;
-		const trackKey = (this.playingTrackKey = this.trackArr[trackArrIndex]);
+		let trackKey = (this.playingTrackKey = this.trackArr[trackArrIndex]);
 
+		console.log(this.playedTracks);
 		const data = await this.getTrackData(trackKey);
 
 		console.log(data);
@@ -287,6 +395,7 @@ class TrackPlayer {
 	async getTrackData(key) {
 		const formData = new FormData();
 		formData.append("playlist_key", this.playingPlaylstKey);
+		formData.append("playlist_slug", this.playingPlaylistSlug);
 		return await $.ajax({
 			type: "POST",
 			url: `/track/get/${key}`,
@@ -303,14 +412,20 @@ class TrackPlayer {
 		this.trackArtist.text(data.artist_name || "Unknown Artist");
 		this.trackAudio.attr("src", data.track_path || "");
 
+		this.trackPlaylsit.attr("href", "/playlist/" + this.playingPlaylistSlug);
+		this.trackInfo.attr("id", data.track_key);
+		this.trackInfo.attr("playlist", this.playingPlaylistSlug);
+
 		this.reloadActivetrack();
 	}
 
 	reloadPlaylistPlayBtn() {
 		const that = this;
 		$(`.play-playlist#${that.playingPlaylistSlug}`).each(function (i, e) {
-			$(e).find("#play").hide();
-			$(e).find("#pause").show();
+			if (that.isTrackPlaying) {
+				$(e).find("#play").hide();
+				$(e).find("#pause").show();
+			}
 		});
 	}
 
@@ -322,5 +437,18 @@ class TrackPlayer {
 
 		// set new active class to new track
 		$(`.track#${this.playingTrackKey}[playlist='${this.playingPlaylistSlug}']`).addClass("active");
+	}
+
+	reloadAtivePlaylist() {
+		const that = this;
+		// remove alctive class
+		$(".play-playlist.active").each(function (i, e) {
+			$(e).removeClass("active");
+		});
+
+		// set new active class to new track
+		console.log("active playlist: ", that.playingPlaylistSlug);
+
+		$(`.play-playlist#${that.playingPlaylistSlug}`).addClass("active");
 	}
 }

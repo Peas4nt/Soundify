@@ -10,7 +10,7 @@ function uploadTrackPageInit() {
 	disableForm();
 	enableForm(["trackFile"]);
 
-	setEvents();
+	setUploadTrackEvents();
 }
 
 function disableForm(formIds = []) {
@@ -28,7 +28,7 @@ function enableForm(formIds) {
 }
 
 // set enevnt
-function setEvents() {
+function setUploadTrackEvents() {
 	// check track
 	$("#trackFile").on("change", (e) => {
 		$(".loader").show();
@@ -46,14 +46,23 @@ function setEvents() {
 			processData: false,
 			contentType: false,
 			success: function (response) {
-				console.log(response);
-				disableForm();
-				if (response.trackStatus == "FOUND") {
-					trackFounded(response.track);
-				} else {
-					trackNotFound();
-				}
 				$(".loader").hide();
+				if (response.status == "SUCCESSFUL") {
+					disableForm();
+					if (response.trackStatus == "FOUND") {
+						trackFounded(response.track);
+					} else {
+						trackNotFound();
+					}
+				} else {
+					showAlert(response.message, () => {
+						const defaultImage = $("#default-image").attr("src");
+						$(".track-img-preview").each((i, elem) => {
+							$(elem).attr("src", defaultImage);
+						});
+						$trackForm[0].reset();
+					});
+				}
 			},
 		});
 	});
@@ -137,8 +146,18 @@ function saveTrack() {
 		processData: false,
 		contentType: false,
 		success: function (response) {
-			showAlert(response.message, () => $trackForm[0].reset());
 			$(".loader").hide();
+			if (response.status == "SUCCESSFUL") {
+				showAlert(response.message, () => {
+					const defaultImage = $("#default-image").attr("src");
+					$(".track-img-preview").each((i, elem) => {
+						$(elem).attr("src", defaultImage);
+					});
+					$trackForm[0].reset();
+				});
+			} else {
+				showAlert(response.message);
+			}
 		},
 	});
 }

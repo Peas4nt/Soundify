@@ -1,100 +1,119 @@
 <div class="profile-container">
-	<div class="profile-info d-flex m-2">
-		<img class="playlist-image me-3 rounded-circle" style="width: 25vh; height: 25vh" src="<%= process.env.DEFAULT_PROFILE_IMAGE_PATH %>" alt="image" />
-		<div>
-			<h2>Vladislavs Teclavs</h2>
-			<p>Description</p>
-		</div>
-	</div>
+  <div class="profile-info d-flex m-2">
+    <img class="playlist-image me-3 rounded-circle" style="width: 25vh; height: 25vh" src="<%= profile.image_path %>" alt="image" onerror="getDafaultProfileImage(this)" />
+    <div>
+      <h2><%= profile.username%></h2>
+    </div>
+  </div>
 </div>
 
-<div class="playlist-menu">
-	<div class="row-title">
-		<h3>Top listened playlists:</h3>
-	</div>
-
-	<div id="playlistSlider" class="splide" style="width: 100%">
-		<div class="splide__track">
-			<ul class="splide__list">
-				<% for (let i = 1; i < 6; i++) { %>
-				<li class="splide__slide">
-					<div class="card">
-						<div class="card-img-top">
-							<img src="./images/album.jpg" alt="playlist" class="card-img-top" />
-							<button class="play-playlist-button">
-								<i class="fa-solid fa-play"></i>
-							</button>
-						</div>
-						<div class="card-body">
-							<h6 class="card-title">Playlist Title <%= i %></h6>
-						</div>
-					</div>
-				</li>
-				<% } %>
-			</ul>
-		</div>
-	</div>
+<% if ((profile.private_recent_track == 0 && profile.private_liked_tracks == 0) || isYourProfile) { %>
+<div class="row-title">
+  <h3>My playlists:</h3>
 </div>
 
-<div class="track-container mt-3">
-	<div class="row-title">
-		<h3>My top 10 tracks:</h3>
-	</div>
-	<div class="table-responsive">
-		<table class="table">
-			<thead>
-				<tr>
-					<th scope="col">#</th>
-					<th scope="col">name</th>
-					<th scope="col">album</th>
-					<th scope="col">time</th>
-					<th scope="col">date created</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr class="">
-					<td>1</td>
-					<td>TrackName</td>
-					<td>album</td>
-					<td>1:33</td>
-					<td>01-01-0001</td>
-				</tr>
-				<tr class="">
-					<td>1</td>
-					<td>TrackName</td>
-					<td>album</td>
-					<td>1:33</td>
-					<td>01-01-0001</td>
-				</tr>
-			</tbody>
-		</table>
-	</div>
+<div id="playlistSlider" class="splide" style="width: 100%">
+  <div class="splide__track">
+    <ul class="splide__list">
+
+      <% if (profile.private_recent_track == 0 || isYourProfile) { %>
+      <li class="splide__slide">
+        <a href="/playlist/<%= recentTracks.slug %>" data-link>
+          <div class="card context-target" id="<%= recentTracks.playlist_key %>" el-type="playlist" owner="<%= recentTracks.is_your_playlist%>">
+            <div class="card-img-top">
+              <img src="<%= recentTracks.image_path %>" alt="playlist" class="card-img-top rounded" style="height: 18vh;" onerror="getDafaultPlaylistImage(this)" />
+              <button id="<%= recentTracks.slug %>" class="play-playlist play-playlist-button">
+                <span id="play"><i class="fa-solid fa-play"></i></span><span id="pause"><i class="fa-solid fa-pause"></i></span>
+              </button>
+            </div>
+            <div class="card-body">
+              <h6 class="card-title"><%= recentTracks.name %></h6>
+            </div>
+          </div>
+        </a>
+      </li>
+      <% } %>
+
+      <% if ((profile.private_liked_tracks == 0) || isYourProfile) { %>
+      <li class="splide__slide">
+        <a href="/playlist/<%= likedTracks.slug %>" data-link>
+          <div class="card context-target" id="<%= likedTracks.playlist_key %>" el-type="playlist" owner="<%= likedTracks.is_your_playlist%>">
+            <div class="card-img-top">
+              <img src="<%= likedTracks.image_path %>" alt="playlist" class="card-img-top rounded" style="height: 18vh;" onerror="getDafaultPlaylistImage(this)" />
+              <button id="<%= likedTracks.slug %>" class="play-playlist play-playlist-button">
+                <span id="play"><i class="fa-solid fa-play"></i></span><span id="pause"><i class="fa-solid fa-pause"></i></span>
+              </button>
+            </div>
+            <div class="card-body">
+              <h6 class="card-title"><%= likedTracks.name %></h6>
+            </div>
+          </div>
+        </a>
+      </li>
+      <% } %>
+
+    </ul>
+  </div>
+</div>
+<% } %>
+
+
+<% if ((profile.private_show_recent_played_playlists == 1 || isYourProfile) && myRecentPlaylists.length != 0) { %>
+<div class="row-title">
+  <h3>My recent played playlists:</h3>
 </div>
 
-<div class="playlist-menu">
-	<div class="row-title">
-		<h3>My public playlists:</h3>
-	</div>
-
-	<div id="playlistSlider" class="splide" style="width: 100%">
-		<div class="splide__track">
-			<ul class="splide__list">
-				<% for (let i = 1; i < 6; i++) { %>
-				<li class="splide__slide">
-					<div class="card">
-						<div class="card-img-top">
-							<img src="./images/album.jpg" alt="playlist" class="card-img-top" />
-							<button class="play-playlist-button">
-								<i class="fa-solid fa-play"></i>
-							</button>
-						</div>
-						<div class="card-body">
-							<h6 class="card-title">Playlist Title <%= i %></h6>
-						</div>
-					</div>
-				</li>
-				<% } %>
-			</ul>
-		</div>
-	</div>
+<div id="playlistSlider" class="splide" style="width: 100%">
+  <div class="splide__track">
+    <ul class="splide__list">
+      <% myRecentPlaylists.forEach(playlist => { %>
+      <li class="splide__slide">
+        <a href="/playlist/<%= playlist.slug %>" data-link>
+          <div class="card context-target" id="<%= playlist.playlist_key %>" el-type="playlist" owner="<%= playlist.is_your_playlist%>">
+            <div class="card-img-top">
+              <img src="<%= playlist.image_path %>" alt="playlist" class="card-img-top rounded" style="height: 18vh;" onerror="getDafaultPlaylistImage(this)" />
+              <button id="<%= playlist.slug %>" class="play-playlist play-playlist-button">
+                <span id="play"><i class="fa-solid fa-play"></i></span><span id="pause"><i class="fa-solid fa-pause"></i></span>
+              </button>
+            </div>
+            <div class="card-body">
+              <h6 class="card-title"><%= playlist.name %></h6>
+            </div>
+          </div>
+        </a>
+      </li>
+      <% }) %>
+    </ul>
+  </div>
 </div>
+<% } %>
+
+<% if ((profile.private_show_my_playlits == 1 || isYourProfile) && myRecentPlaylists.length != 0) { %>
+<div class="row-title">
+  <h3>Self-created playlists:</h3>
+</div>
+
+<div id="playlistSlider" class="splide" style="width: 100%">
+  <div class="splide__track">
+    <ul class="splide__list">
+      <% myPlaylists.forEach(playlist => { %>
+      <li class="splide__slide">
+        <a href="/playlist/<%= playlist.slug %>" data-link>
+          <div class="card context-target" id="<%= playlist.playlist_key %>" el-type="playlist" owner="<%= playlist.is_your_playlist%>">
+            <div class="card-img-top">
+              <img src="<%= playlist.image_path %>" alt="playlist" class="card-img-top rounded" style="height: 18vh;" onerror="getDafaultPlaylistImage(this)" />
+              <button id="<%= playlist.slug %>" class="play-playlist play-playlist-button">
+                <span id="play"><i class="fa-solid fa-play"></i></span><span id="pause"><i class="fa-solid fa-pause"></i></span>
+              </button>
+            </div>
+            <div class="card-body">
+              <h6 class="card-title"><%= playlist.name %></h6>
+            </div>
+          </div>
+        </a>
+      </li>
+      <% }) %>
+    </ul>
+  </div>
+</div>
+<% } %>

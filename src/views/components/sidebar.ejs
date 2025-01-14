@@ -46,8 +46,8 @@
       <div class="sidebar-playlists">
         <% allUserPlaylists.forEach(e => { %>
         <li class="context-target" id="<%= e.playlist_key %>" el-type="playlist" owner="<%= e.is_your_playlist%>">
-          <a href="/playlist/<%= e.slug %>"  data-link>
-            <div class="parent-icon"><img class="playlist-image" src="<%= e.image_path %>" alt="playlist" /></div>
+          <a href="/playlist/<%= e.slug %>" data-link>
+            <div class="parent-icon"><img class="playlist-image" src="<%= e.image_path %>" alt="playlist" onerror="getDafaultPlaylistImage(this)"/></div>
             <div class="menu-title"><%= e.name %></div>
           </a>
         </li>

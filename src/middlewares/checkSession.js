@@ -9,7 +9,7 @@ export default async (req, res, next) => {
 	}
 
 	// get user data from db
-	const [user] = await sql`select user_key key, username, email from users where user_key = ${req.session.user.key}`;
+	const [user] = await sql`select user_key key, username, email, image_path from users where user_key = ${req.session.user.key}`;
 	req.session.user = user;
 	
 	next();

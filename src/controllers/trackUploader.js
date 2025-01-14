@@ -6,6 +6,7 @@ import dotenv from "dotenv";
 import { sql } from "../../db.js";
 import path from "path";
 import { fileURLToPath } from "url";
+import { validationResult } from "express-validator";
 
 const shazam = new Shazam();
 dotenv.config();
@@ -35,10 +36,17 @@ export const postCheckTrack = async (req, res) => {
 				image: recognise.track.images.background,
 			};
 
-			return res.status(200).send({ status: "OK", trackStatus: "FOUND", track });
+			const check = await sql`select 1
+			from tracks t 
+			join artists a on a.artist_key = t.fk_artist_key
+			where t.name || '-' || a.name = ${track.name + "-" + track.artist}`;
+
+			if (check.length > 0) return res.status(200).send({ status: "ERROR", trackStatus: "FOUND", message: "This track already exists in our database. Please try uploading a different one." });
+
+			return res.status(200).send({ status: "SUCCESSFUL", trackStatus: "FOUND", track });
 		}
 
-		return res.status(200).send({ status: "OK", trackStatus: "NOTFOUND" });
+		return res.status(200).send({ status: "SUCCESSFUL", trackStatus: "NOTFOUND" });
 	} catch (error) {
 		fs.unlink(filePath, (err) => {
 			if (err) {
@@ -59,6 +67,45 @@ export const postTrackUpload = async (req, res) => {
 		let imageFile = req.files.image ? req.files.image[0] : null;
 		const trackName = req.body.name;
 		const trackArtist = req.body.artist ?? req.session.user.username;
+		const isUserAuthor = !!req.body.artist;
+
+		// validate data
+		const errors = validationResult(req);
+		if (!errors.isEmpty()) {
+			// delete track file
+			if (trackFile) {
+				const filePath = path.join(trackFile.path);
+
+				fs.unlink(filePath, (err) => {
+					if (err) {
+						console.error(`Error deleting file ${filePath}:`, err);
+					} else {
+						console.log(`File ${filePath} deleted successfully.`);
+					}
+				});
+			}
+
+			// delete image file
+			if (imageFile) {
+				const filePath = path.join(imageFile.path);
+
+				fs.unlink(filePath, (err) => {
+					if (err) {
+						console.error(`Error deleting file ${filePath}:`, err);
+					} else {
+						console.log(`File ${filePath} deleted successfully.`);
+					}
+				});
+			}
+
+			// get error messages
+			const errorsMsg = errors
+				.array()
+				.map((e) => e.msg)
+				.join(" <br/>");
+
+			return res.status(200).send({ status: "ERROR", message: errorsMsg });
+		}
 
 		let imageFullName = "";
 		// check if file exists
@@ -81,8 +128,6 @@ export const postTrackUpload = async (req, res) => {
 			if (newTrackFile == null) corrupted = true;
 		} else corrupted = true;
 
-		// get track duration (1:00)
-
 		// rename user track file if it soundcloud file corrupted
 		// else delete user track if all ok
 		if (corrupted) {
@@ -97,15 +142,16 @@ export const postTrackUpload = async (req, res) => {
 			});
 		}
 
+		// get track duration (1:00)
 		const trackDuration = await getTrackDuration(trackFilePath);
 
-		const trackArtistKey = await getArtistKey(trackArtist, req.session.user);
+		const trackArtistKey = await getArtistKey(trackArtist, req.session.user, isUserAuthor);
 
 		await sql`insert into 
 		tracks(name, fk_artist_key, fk_user_key, duration, image_path, track_path, listen_count)
 		values(${trackName}, ${trackArtistKey}, ${req.session.user.key}, ${trackDuration}, ${imageFullName}, ${trackFullName}, 0)`;
 
-		return res.status(200).send({ status: "OK", message: "Track upload successfully" });
+		return res.status(200).send({ status: "SUCCESSFUL", message: "Track upload successfully" });
 	} catch (error) {
 		console.log(error);
 		return res.status(500).send({ status: "ERROR", message: "Track upload failed" });
@@ -183,7 +229,7 @@ function getTrackDuration(filePath) {
 	});
 }
 
-async function getArtistKey(artistName, user) {
+async function getArtistKey(artistName, user, isUserAuthor) {
 	const [artist] = await sql`select artist_key from artists where name = ${artistName}`;
 
 	if (artist) {
@@ -192,7 +238,7 @@ async function getArtistKey(artistName, user) {
 
 	// TODO add author image
 	// TODO auto creating artist playlist
-	const [newArtist] = await sql`insert into artists (name, fk_user_key) values (${artistName}, ${user.key}) returning artist_key`;
+	const [newArtist] = await sql`insert into artists (name, fk_user_key, is_user) values (${artistName}, ${user.key}, ${isUserAuthor? 1 : 0}) returning artist_key`;
 
 	return newArtist.artist_key;
 }
