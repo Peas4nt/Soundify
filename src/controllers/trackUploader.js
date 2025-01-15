@@ -164,8 +164,12 @@ async function getTrackFromSoundCloud(trackName, trackArtist) {
 
 	const client = new SoundCloud.Client(soundcloudApiKey);
 	// get search result from soundcloud
+	console.log(trackName + " - " + trackArtist);
+	
 	const result = await client.search(trackName + " - " + trackArtist, "all");
-
+	
+	console.log(result);
+	
 	if (result.length == 0) return null;
 	// get song info from soundcloud
 	const song = await client.getSongInfo(result[0].url);

@@ -261,8 +261,7 @@ const getPageHTML = {
 			from playlists p
 			join tracks_log tl on tl.fk_playlist_key = p.playlist_key
 			where ref_data_func is null
-			and p.fk_user_keys = ${req.session.user.key}
-			and tl.fk_user_key = ${req.session.user.key}
+			and p.fk_user_keys = ${key}
 			and tl.dt_created >= now() - interval  '30 days'
 			group by p.playlist_key, p.name, p.slug, p.image_path, p.fk_user_keys
 			limit 10
@@ -281,7 +280,7 @@ const getPageHTML = {
 			from playlists p
 			join tracks_log tl on tl.fk_playlist_key = p.playlist_key
 			where ref_data_func is null
-			and tl.fk_user_key = ${req.session.user.key}
+			and tl.fk_user_key = ${key}
 			and tl.dt_created >= now() - interval  '30 days'
 			group by p.playlist_key, p.name, p.slug, p.image_path, p.fk_user_keys
 			limit 10
