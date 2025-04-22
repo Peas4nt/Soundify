@@ -164,9 +164,6 @@ class TrackPlayer {
 			console.log("Track load error");
 		});
 
-		console.log("111111111111111111111");
-		console.log(this.volume);
-
 		this.setVolume(this.volume);
 		this.updateRepeatIcon();
 		this.updateShuffleIcon();

@@ -23,8 +23,8 @@ export const signupValidation = [
 
   // check password
   body('password')
-    .isLength({ min: 6, max: 50 })
-    .withMessage('Password must be between 6 and 50 characters long')
+    .isLength({ min: 9, max: 50 })
+    .withMessage('Password must be between 9 and 50 characters long')
     .matches(/\d/)
     .withMessage('Password must contain at least one number')
     .matches(/[A-Z]/)

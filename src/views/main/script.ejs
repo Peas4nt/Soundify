@@ -492,6 +492,8 @@
             } else {
               const $playlist = getPlaylistSideBarHTML(response.data);
 
+              userPlaylists = [response.data, ...userPlaylists];
+
               $playlist.find('a[data-link]').click(spaHref);
 
               $('.sidebar-playlists').append($playlist);

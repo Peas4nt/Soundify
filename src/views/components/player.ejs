@@ -1,0 +1,58 @@
+<div class="p-md-2 p-0 row col-12 m-0 player context-target">
+  <!-- Player -->
+  <!-- Logo -->
+  <div class="d-flex col-12 col-md-3 track-info context-target" id="" el-type="track" owner="0" playlist="">
+    <img src="/images/track2.png" id="track-img" class="d-none d-md-inline rounded me-3" style="height: 10vh" alt="logo" onerror="getDafaultTrackImage(this)"/>
+    <div class="col-12">
+      <p class="m-0 col-12 text-truncate nowrap" id="track-name">Track name</p>
+      <div class="col-12 row">
+        <p class="m-0 col-6 col-md-12 text-truncate nowrap" id="track-author">Track author</p>
+        <p class="m-0 col-6 col-md-12 text-truncate nowrap d-none d-xl-inline" id="track-playlist"><a id="playlist-href" href="" data-link>now playing album</a></p>
+      </div>
+      <audio id="track"></audio>
+    </div>
+  </div>
+  <!-- Track -->
+
+  <!-- Controls -->
+  <div class="col-12 col-md-6">
+    <div class="music-control">
+      <!-- Check -->
+      <input type="checkbox" id="music-loop" />
+      <label for="music-loop" class="me-3" id="music-loop-label" title="Repeat button">
+        <i class="fa-solid fa-repeat unchecked"></i>
+        <i class="fa-solid fa-repeat checked" style="color: #ffd43b"></i>
+      </label>
+
+      <!-- Control btns -->
+      <button type="button" id="btn-prev" class="btn btn-lg" title="Previous"><i class="fa-solid fa-backward-step"></i></button>
+      <button type="button" class="btn btn-lg" id="btn-play" title="Play/Pause button">
+        <span id="play"><i class="fa-solid fa-play"></i></span><span id="pause"><i class="fa-solid fa-pause"></i></span>
+      </button>
+      <button type="button" id="btn-next" class="btn btn-lg"><i class="fa-solid fa-forward-step" title="Next"></i></button>
+
+      <!-- Check -->
+      <input type="checkbox" id="music-random" />
+      <label for="music-random" class="me-3" id="music-random-label" title="Shuffle button">
+        <i class="fa-solid fa-shuffle unchecked"></i>
+        <i class="fa-solid fa-shuffle checked" style="color: #ffd43b"></i>
+      </label>
+    </div>
+
+    <div class="center">
+      <div class="me-2 center"><span id="track-time">0:00</span></div>
+      <input id="track-range" type="range" class="form-range w-50" value="0" min="0" />
+      <div class="ms-2 center"><span id="track-max-time">0:00</span></div>
+    </div>
+  </div>
+
+  <!-- Track volume -->
+  <div class="center col-4 col-md-3 d-none d-md-flex">
+    <input type="checkbox" id="mute-volume" />
+    <label for="mute-volume" class="ms-2" id="mute-volume-label" title="Mute/Unmute button">
+      <i class="fa-solid fa-volume-high unchecked"></i>
+      <i class="fa-solid fa-volume-xmark checked"></i>
+    </label>
+    <input type="range" class="form-range ms-3 w-50" id="music-volume" min="0" max="1" value="0.2" step="0.01" />
+  </div>
+</div>

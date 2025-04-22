@@ -124,6 +124,7 @@ function pageInit(url) {
 		trackPlayer.playlistStartBtnInit();
 		trackPlayer.reloadPlaylistPlayBtn();
 	} else if (url == "profile") {
+		spaLinkEventInit();
 		splideInit();
 	} else if (url == "uploadtrack") {
 		// select2Init();

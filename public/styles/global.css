@@ -328,12 +328,17 @@ a:hover {
 .main-wrapper {
 	background-color: var(--bs-body-bg);
 	margin-top: 80px;
-	margin-bottom: 20vh;
+	/* margin-bottom: 20vh; */
 	margin-left: 270px;
 	margin-right: 10px;
 	transition: ease-out 0.3s;
 	min-height: 70vh;
 	border-radius: var(--border-radius-large);
+}
+
+.copyright{
+	margin-top: 10px;
+	margin-bottom: 20vh;
 }
 
 .playlist-image {
