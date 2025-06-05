@@ -1,6 +1,8 @@
 import fs from "fs";
 import { Shazam } from "node-shazam";
-import SoundCloud from "soundcloud-scraper";
+// import SoundCloud from "soundcloud-scraper";
+import ytSearch from "yt-search";
+import { exec } from "child_process";
 import { parseFile } from "music-metadata";
 import dotenv from "dotenv";
 import { sql } from "../../db.js";
@@ -123,7 +125,8 @@ export const postTrackUpload = async (req, res) => {
 		const trackFullName = `${trackArtist.toLowerCase()}-${trackName.toLowerCase()}.mp3`.replace(/ /g, "_");
 		const trackFilePath = path.join(__dirname, "../../" + process.env.TRACK_FOLDER_PATH, trackFullName);
 		if (imageFile == null) {
-			const newTrackFile = await getTrackFromSoundCloud(trackName, trackArtist);
+			// const newTrackFile = await getTrackFromSoundCloud(trackName, trackArtist);
+			const newTrackFile = await getTrackFromYouTube(trackName, trackArtist);
 
 			if (newTrackFile == null) corrupted = true;
 		} else corrupted = true;
@@ -158,6 +161,33 @@ export const postTrackUpload = async (req, res) => {
 	}
 };
 
+// upload track from youtube
+async function getTrackFromYouTube(trackName, trackArtist) {
+	const searchQuery = `${trackName} ${trackArtist}`;
+
+	const result = await ytSearch(searchQuery);
+	if (!result.videos.length) {
+		return new Error("No videos found for the search query.");
+	}
+
+	const videoUrl = result.videos[0].url;
+
+	const trackFileName = `${trackArtist.toLowerCase()}-${trackName.toLowerCase()}.mp3`.replace(/ /g, "_");
+	const trackFilePath = path.join(__dirname, "../../" + process.env.TRACK_FOLDER_PATH, trackFileName);
+
+	const command = `yt-dlp -f bestaudio --extract-audio --audio-format mp3 --output "${trackFilePath}" "${videoUrl}"`;
+
+	exec(command, (error, stdout, stderr) => {
+		if (error) {
+			console.error(`youtube video download error: ${error.message}`);
+			return;
+		}
+		if (stderr) console.warn(stderr);
+		console.log(`youtube video downloaded successfully: ${trackFilePath}`);
+		return searchQuery;
+	});
+}
+
 // upload track from soundcloud
 async function getTrackFromSoundCloud(trackName, trackArtist) {
 	const soundcloudApiKey = process.env.SOUNDCLOUND_API_KEY;
@@ -165,11 +195,11 @@ async function getTrackFromSoundCloud(trackName, trackArtist) {
 	const client = new SoundCloud.Client(soundcloudApiKey);
 	// get search result from soundcloud
 	console.log(trackName + " - " + trackArtist);
-	
+
 	const result = await client.search(trackName + " - " + trackArtist, "all");
-	
+
 	console.log(result);
-	
+
 	if (result.length == 0) return null;
 	// get song info from soundcloud
 	const song = await client.getSongInfo(result[0].url);
@@ -242,7 +272,7 @@ async function getArtistKey(artistName, user, isUserAuthor) {
 
 	// TODO add author image
 	// TODO auto creating artist playlist
-	const [newArtist] = await sql`insert into artists (name, fk_user_key, is_user) values (${artistName}, ${user.key}, ${isUserAuthor? 1 : 0}) returning artist_key`;
+	const [newArtist] = await sql`insert into artists (name, fk_user_key, is_user) values (${artistName}, ${user.key}, ${isUserAuthor ? 1 : 0}) returning artist_key`;
 
 	return newArtist.artist_key;
 }
