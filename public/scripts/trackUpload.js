@@ -159,5 +159,12 @@ function saveTrack() {
 				showAlert(response.message);
 			}
 		},
+		error: function (xhr, status, error) {
+			$(".loader").hide();
+			showAlert("An error occurred while uploading the track. Please try again.", () => {
+				location.reload();
+			});
+			console.error("Error uploading track:", error);
+		},
 	});
 }

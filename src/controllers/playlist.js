@@ -4,6 +4,7 @@ import getTracksRefFunctions from "../utils/getTracksRefFunctions.js";
 import { validationResult } from "express-validator";
 import { fileURLToPath } from "url";
 import fs from "fs";
+import archiver from "archiver";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -93,7 +94,7 @@ export const putData = async (req, res) => {
 					}
 				});
 			}
-			
+
 			return res.status(200).send({ status: "ERROR", message: errorsMsg });
 		}
 
@@ -252,4 +253,44 @@ export const postGetPlaylist = async (req, res) => {
 		console.log(error);
 		return res.status(500).send({ status: "ERROR", message: "Playlist getting error" });
 	}
+};
+
+export const getDownloadPlaylist = async (req, res) => {
+	const { slug } = req.params;
+
+	const playlist = await sql`
+	WITH track_keys AS (
+		SELECT jsonb_array_elements(playlists.tracks)::int AS track_kyes
+		FROM playlists
+		WHERE slug = ${slug}
+	)
+	SELECT t.track_path
+	FROM tracks t
+	JOIN track_keys ti ON t.track_key = ti.track_kyes;`;
+
+	if (playlist.length === 0) {
+		return rew.status(404).send({ status: "ERROR", message: "Playlist not found or its empty" });
+	}
+	
+	const trackPaths = playlist.map((track) => path.join(__dirname, "../", "../", process.env.TRACK_FOLDER_PATH, track.track_path));
+
+	res.setHeader("Content-Type", "application/zip");
+	res.setHeader("Content-Disposition", `attachment; filename=playlist-${slug}.zip`);
+
+	const archive = archiver("zip", {
+		zlib: { level: 9 },
+	});
+
+	archive.on("error", (err) => res.status(500).send({ message: "Archiving error", error: err.message }));
+
+	archive.pipe(res);
+
+	trackPaths.forEach((file) => {
+		if (fs.existsSync(file)) {
+			archive.file(file, { name: path.basename(file) });
+		}
+	});
+
+	archive.finalize();
+	console.log(`Playlist ${slug} downloaded successfully.`);
 };

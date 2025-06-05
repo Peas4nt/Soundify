@@ -118,12 +118,18 @@
             items: getPlaylistAddTrackMenu(elementId)
           }
 
-          if (elementOwner == 1) {
-            menu.items.editPlaylist = {
-              name: "Edit track",
-              icon: "fa-solid fa-pen-to-square"
-            }
+          menu.items.DownloadTrack = {
+            name: "Download track",
+            icon: "fa-solid fa-download",
           }
+
+          // future functionality
+          // if (elementOwner == 1) {
+          //   menu.items.editPlaylist = {
+          //     name: "Edit track",
+          //     icon: "fa-solid fa-pen-to-square"
+          //   }
+          // }
         }
 
         return menu;
@@ -134,6 +140,20 @@
   const menuFunctions = {
     playlistCreate: () => {
       getPlaylistForm()
+    },
+    DownloadTrack: (key, option) => {
+      // key is track key
+      console.log('Download track');
+      const $element = $(`.track.context-target[id="${key}"]`);
+      const trackUrl = $element.attr('track-url');
+
+      const fullUrl = window.location.origin + trackUrl;
+      const link = $('<a>')
+        .attr('href', fullUrl)
+        .attr('download', '')
+        .appendTo('body');
+      link[0].click();
+      link.remove();
     },
     editPlaylist: (key) => {
       const formData = new FormData();
@@ -227,7 +247,6 @@
           console.log(errorThrown);
         }
       });
-      // TODO update sidebar playlists
     },
     likeTrack: (key) => {
       console.log('Like Track');
@@ -254,32 +273,12 @@
         dataType: "JSON",
         processData: false,
         contentType: false,
-        // success: function(response) {
-        //   // playlists liked
-        //   if (likeStatus) {
-        //     likedPlaylist[key] = {
-        //       tracks: response.data.tracks,
-        //       image_path: response.data.image_path
-        //     }
-
-        //     const $playlist = $(`
-        //     <li id="${response.data.playlist_key}">
-        //       <a href="/playlist/${response.data.slug}" data-link>
-        //         <div class="parent-icon"><img class="playlist-image" src="${response.data.image_path}" alt="playlist" /></div>
-        //         <div class="menu-title">${response.data.name}</div>
-        //       </a>
-        //     </li>
-        //     `)
-
-        //     $('.sidebar-playlists').append($playlist);
-        //   } else {
-        //     $(`.sidebar-playlists #${key}`).remove();
-        //   }
-
-        // },
-        // error: function(jqXHR, textStatus, errorThrown) {
-        //   console.log(errorThrown);
-        // }
+        success: function(response) {
+          console.log('track liked successfully');
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+          console.log(errorThrown);
+        }
       });
     },
     addTrackToPLaylist: (key, options) => {
@@ -526,11 +525,11 @@
   }
 
   function saveUserData(name, value, isBool = true) {
-    if (isBool) value = value? 1 : 0
+    if (isBool) value = value ? 1 : 0
 
     const formData = new FormData();
     formData.append("name", name);
-    formData.append("value",value);
+    formData.append("value", value);
 
     $.ajax({
       type: "PUT",
@@ -550,8 +549,8 @@
 
   // init track player controls
   const trackPlayer = new TrackPlayer(
-    '<%= recentPlayedTrack?.track_key %>', 
-    '<%= recentPlayedTrack?.playlist_slug %>', 
+    '<%= recentPlayedTrack?.track_key %>',
+    '<%= recentPlayedTrack?.playlist_slug %>',
     <%- userData %>);
 </script>
 

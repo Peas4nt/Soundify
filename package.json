@@ -12,6 +12,7 @@
   "author": "VT",
   "license": "ISC",
   "dependencies": {
+    "archiver": "^7.0.1",
     "bcrypt": "^5.1.1",
     "body-parser": "^1.20.3",
     "dotenv": "^16.4.5",
@@ -25,6 +26,9 @@
     "node-shazam": "^1.2.7",
     "nodemon": "^3.1.4",
     "postgres": "^3.4.4",
-    "soundcloud-scraper": "^5.0.3"
+    "soundcloud-scraper": "^5.0.3",
+    "youtubedl-core": "^4.11.7",
+    "yt-search": "^2.13.1",
+    "ytdl-core": "^4.11.5"
   }
 }

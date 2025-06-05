@@ -63,6 +63,7 @@ router.post("/playlist/like", mul.parser.none(), playlist.postLike);
 router.post("/playlist/addtrack", mul.parser.none(), playlist.postAddTrackToPlaylists);
 router.post("/playlist/getdata", mul.parser.none(), playlist.postGetPlaylist);
 router.post("/playlist/get/:slug", mul.parser.none(), playlist.postGetPlaylistTracks);
+router.get("/download-playlist/:slug", mul.parser.none(), playlist.getDownloadPlaylist);
 
 // Users Settings
 router.put("/updatesettings", mul.parser.none(), userSettings.putData);

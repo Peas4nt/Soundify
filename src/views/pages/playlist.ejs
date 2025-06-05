@@ -1,6 +1,6 @@
 <div class="playlist-container">
   <div class="playlist-info d-flex m-2">
-    <img class="playlist-image me-3" style="width: 20vh; height: 20vh" src="<%= playlist.image_path %>" alt="image" onerror="getDafaultPlaylistImage(this)"/>
+    <img class="playlist-image me-3" style="width: 20vh; height: 20vh" src="<%= playlist.image_path %>" alt="image" onerror="getDafaultPlaylistImage(this)" />
     <div>
       <h2><%= playlist.name %></h2>
       <h4><a href="/profile/<%= playlist.user_key %>" data-link><%= playlist.username %></a></h4>
@@ -12,9 +12,9 @@
     <button id="<%= playlist.slug %>" class="play-playlist btn btn-primary">
       <span id="play"><i class="fa-solid fa-play"></i></span><span id="pause"><i class="fa-solid fa-pause"></i></span>
     </button>
-    <!-- <a name="" id="" class="btn btn-primary" href="#" role="button">Like</a>
-    <a name="" id="" class="btn btn-primary" href="#" role="button">Donwlnload playlist</a>
-    <a name="" id="" class="btn btn-primary" href="#" role="button">Edit Playlist</a> -->
+    <!-- <a name="" id="" class="btn btn-primary" href="#" role="button">Like</a> -->
+    <a id="playlist-download-btn" class="btn btn-primary" href="/download-playlist/<%= playlist.slug %>" role="button" download>Download playlist</a>
+    <!-- <a name="" id="" class="btn btn-primary" href="#" role="button">Edit Playlist</a> -->
   </div>
 </div>
 
@@ -33,7 +33,7 @@
       <tbody>
 
         <% tracks.forEach((e, id) => { %>
-        <tr class="track context-target" id="<%= e.track_key %>" el-type="track" owner="<%= e.is_your_track %>" playlist="<%= playlist.slug %>">
+        <tr class="track context-target" id="<%= e.track_key %>" el-type="track" owner="<%= e.is_your_track %>" playlist="<%= playlist.slug %>" track-url="<%= e.track_url %>">
           <td><%= id + 1 %></td>
           <td>
             <div class="track-container">
