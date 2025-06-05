@@ -33,7 +33,7 @@
       <tbody>
 
         <% tracks.forEach((e, id) => { %>
-        <tr class="track context-target" id="<%= e.track_key %>" el-type="track" owner="<%= e.is_your_track %>" playlist="<%= playlist.slug %>">
+        <tr class="track context-target" id="<%= e.track_key %>" el-type="track" owner="<%= e.is_your_track %>" playlist="<%= playlist.slug %>" track-url="<%= e.track_url %>">
           <td><%= id + 1 %></td>
           <td>
             <div class="track-container">

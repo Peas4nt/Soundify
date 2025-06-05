@@ -211,6 +211,7 @@ const getPageHTML = {
 
 		const tracks = await sql`
 		select t.track_key, t.fk_artist_key, a.name artist, t.name, t.listen_count, t.duration, t.dt_created,
+		${process.env.TRACK_PATH} || t.track_path track_url,
 		case when t.image_path LIKE 'https%' then t.image_path
 		else ${process.env.IMAGE_PATH} || t.image_path end image_path,
 		case when t.fk_user_key = ${req.session.user.key} then 1 else 0 end is_your_track
