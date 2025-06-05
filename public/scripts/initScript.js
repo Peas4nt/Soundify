@@ -9,7 +9,7 @@ $(document).ready(function () {
 		const isToggled = $("body").hasClass("toggled");
 		toggleSidebar(!isToggled);
 
-		if ($(window).width() >= 1199) saveUserData('is_sidebar_closed', !isToggled);
+		if ($(window).width() >= 1199) saveUserData("is_sidebar_closed", !isToggled);
 	});
 
 	$(".sidebar-close").on("click", function () {
@@ -79,6 +79,18 @@ function toggleSidebar(state) {
 	}
 }
 
+function checkPlaylistDownloadButton() {
+	const currentUrl = window.location.href;
+	console.log(currentUrl);
+	console.log(currentUrl.includes("mytracks"));
+	console.log(currentUrl.includes("likedtracks"));
+	
+	if (currentUrl.includes("likedtracks") || currentUrl.includes("mytracks")) {
+		const btn = document.getElementById("playlist-download-btn");
+		if (btn) btn.remove();
+	}
+}
+
 function spaHref(event) {
 	event.preventDefault();
 
@@ -136,8 +148,9 @@ function pageInit(url) {
 		trackPlayer.reloadActivetrack();
 		spaLinkEventInit();
 	} else if (url == "settings") {
-		settingsPageInit()
+		settingsPageInit();
 	}
+	checkPlaylistDownloadButton();
 }
 
 function splideInit() {
