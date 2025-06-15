@@ -246,9 +246,11 @@ const getPageHTML = {
 		const [profile] = await sql`SELECT user_key, username,${process.env.IMAGE_PATH} || image_path image_path, private_profile, private_liked_tracks, private_recent_track, private_show_my_playlits, private_show_recent_played_playlists FROM users WHERE user_key=${key};`;
 
 		const [likedTracks] = await sql`
-		select name, ${process.env.DEFAULT_PATH} || image_path image_path, slug || ${key} slug from playlists where slug = 'likedtracks_'`;
+		select name, ${process.env.DEFAULT_PATH} || image_path image_path, slug || ${key} slug from playlists 
+		where slug = 'likedtracks_'`;
 		const [recentTracks] = await sql`
-		select name, ${process.env.DEFAULT_PATH} || image_path image_path, slug || ${key} slug from playlists where slug = 'recentlyplayed_'`;
+		select name, ${process.env.DEFAULT_PATH} || image_path image_path, slug || ${key} slug from playlists 
+		where slug = 'recentlyplayed_'`;
 
 		const myPlaylists = await sql`
 		with popular_playlists as (

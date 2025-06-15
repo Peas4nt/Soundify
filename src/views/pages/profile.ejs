@@ -7,7 +7,7 @@
   </div>
 </div>
 
-<% if ((profile.private_recent_track == 0 && profile.private_liked_tracks == 0) || isYourProfile) { %>
+<% if ((profile.private_recent_track == 0 || profile.private_liked_tracks == 0) || isYourProfile) { %>
 <div class="row-title">
   <h3>My playlists:</h3>
 </div>

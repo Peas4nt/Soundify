@@ -87,7 +87,7 @@ export const putImage = async (req, res) => {
 
 		await sql`update users set image_path = ${fileName} where user_key = ${req.session.user.key};`;
 
-		return res.status(200).send({ status: "SUCCESSFUL", message: "The password was edited successfully", data: { image_path: process.env.IMAGE_PATH + fileName } });
+		return res.status(200).send({ status: "SUCCESSFUL", message: "The picture was edited successfully", data: { image_path: process.env.IMAGE_PATH + fileName } });
 	} catch (error) {
 		console.log(error);
 		return res.status(500).send({ status: "ERROR", message: "User settings editing error" });
