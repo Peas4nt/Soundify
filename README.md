@@ -1,6 +1,6 @@
 # 🎵 Soundify
 
-Constructed as a school project. Final school project 4.course
+Final Graduation Project | 4th Year Programming Technician
 
 ---
 
